@@ -47,28 +47,5 @@ ifconfig $ethernet_interface down
 sleep 2
 ifconfig $ethernet_interface up
 
-# 方法6: 在sysctl.conf中添加额外的网络稳定性设置
-echo "方法6: 在sysctl.conf中添加额外的网络稳定性设置"
-SYSCTL_CONF_FILE="/etc/sysctl.conf"
-
-# 检查是否已存在相关设置
-if ! grep -q "# e1000e stability fixes" $SYSCTL_CONF_FILE; then
-    cat >> $SYSCTL_CONF_FILE << EOF
-
-# e1000e stability fixes
-net.core.netdev_max_backlog = 16384
-net.ipv4.tcp_max_syn_backlog = 8192
-net.core.somaxconn = 8192
-net.ipv4.tcp_timestamps = 1
-net.ipv4.tcp_slow_start_after_idle = 0
-net.ipv4.tcp_no_metrics_save = 1
-net.ipv4.tcp_ecn = 0
-net.ipv4.tcp_fin_timeout = 15
-EOF
-fi
-
-# 应用sysctl设置
-sysctl -p
-
 echo "e1000e网络适配器Hardware Unit Hang问题修复已完成！"
 echo "请考虑重启系统以确保所有更改完全生效。"
